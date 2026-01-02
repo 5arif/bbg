@@ -17,7 +17,7 @@ namespace bbg_net_web_api.Controllers
         [HttpPost("publish")]
         public async Task<IActionResult> PublishMessage([FromBody] string message)
         {
-            await _kafkaProducerService.ProduceMessageAsync(message);
+            await _kafkaProducerService.ProduceMessageAsync("fromdotnet", message);
             return Ok(message);
         }
     }
