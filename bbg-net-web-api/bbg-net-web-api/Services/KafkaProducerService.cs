@@ -23,7 +23,7 @@ namespace bbg_net_web_api.Services
             var jsonMessage = JsonConvert.SerializeObject(order);
             var message = new Message<string, string>
             {
-                Key = order.OrderId.ToString(), // Key can be a simple string
+                Key = order.orderId.ToString(), // Key can be a simple string
                 Value = jsonMessage
             };            
             var deliveryReport = await _producer.ProduceAsync(TopicName, message);

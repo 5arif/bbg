@@ -2,8 +2,8 @@
 {
     public class OrderEvent
     {
-        public string OrderId { get; set; }
-        public double Amount { get; set; }
-        public string Customer { get; set; }
+        public string orderId { get; set; }
+        public double amount { get; set; }
+        public string customer { get; set; }
     }
 }

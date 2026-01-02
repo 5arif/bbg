@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\Lenovo\\source\\repos\\bbg\\bbg-net-web-api\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{6016E906-1AE3-05E9-365E-9A75946E6F99}|bbg-net-web-api\\bbg-net-web-api.csproj|c:\\users\\lenovo\\source\\repos\\bbg\\bbg-net-web-api\\bbg-net-web-api\\services\\kafkaproducerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6016E906-1AE3-05E9-365E-9A75946E6F99}|bbg-net-web-api\\bbg-net-web-api.csproj|solutionrelative:bbg-net-web-api\\services\\kafkaproducerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{6016E906-1AE3-05E9-365E-9A75946E6F99}|bbg-net-web-api\\bbg-net-web-api.csproj|c:\\users\\lenovo\\source\\repos\\bbg\\bbg-net-web-api\\bbg-net-web-api\\models\\orderevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6016E906-1AE3-05E9-365E-9A75946E6F99}|bbg-net-web-api\\bbg-net-web-api.csproj|solutionrelative:bbg-net-web-api\\models\\orderevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6016E906-1AE3-05E9-365E-9A75946E6F99}|bbg-net-web-api\\bbg-net-web-api.csproj|c:\\users\\lenovo\\source\\repos\\bbg\\bbg-net-web-api\\bbg-net-web-api\\controllers\\publishercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6016E906-1AE3-05E9-365E-9A75946E6F99}|bbg-net-web-api\\bbg-net-web-api.csproj|solutionrelative:bbg-net-web-api\\controllers\\publishercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6016E906-1AE3-05E9-365E-9A75946E6F99}|bbg-net-web-api\\bbg-net-web-api.csproj|c:\\users\\lenovo\\source\\repos\\bbg\\bbg-net-web-api\\bbg-net-web-api\\services\\kafkaproducerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6016E906-1AE3-05E9-365E-9A75946E6F99}|bbg-net-web-api\\bbg-net-web-api.csproj|solutionrelative:bbg-net-web-api\\services\\kafkaproducerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6016E906-1AE3-05E9-365E-9A75946E6F99}|bbg-net-web-api\\bbg-net-web-api.csproj|c:\\users\\lenovo\\source\\repos\\bbg\\bbg-net-web-api\\bbg-net-web-api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -30,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 21,
+          "SelectedChildIndex": 23,
           "Children": [
             {
               "$type": "Bookmark",
@@ -118,13 +118,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "OrderEvent.cs",
               "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\bbg\\bbg-net-web-api\\bbg-net-web-api\\Models\\OrderEvent.cs",
               "RelativeDocumentMoniker": "bbg-net-web-api\\Models\\OrderEvent.cs",
               "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\bbg\\bbg-net-web-api\\bbg-net-web-api\\Models\\OrderEvent.cs",
               "RelativeToolTip": "bbg-net-web-api\\Models\\OrderEvent.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAkAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAYAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-02T08:36:23.916Z",
               "EditorCaption": ""
@@ -144,20 +144,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "KafkaProducerService.cs",
               "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\bbg\\bbg-net-web-api\\bbg-net-web-api\\Services\\KafkaProducerService.cs",
               "RelativeDocumentMoniker": "bbg-net-web-api\\Services\\KafkaProducerService.cs",
               "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\bbg\\bbg-net-web-api\\bbg-net-web-api\\Services\\KafkaProducerService.cs",
               "RelativeToolTip": "bbg-net-web-api\\Services\\KafkaProducerService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAMwB0AAABwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-02T08:11:39.156Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "PublisherController.cs",
               "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\bbg\\bbg-net-web-api\\bbg-net-web-api\\Controllers\\PublisherController.cs",
               "RelativeDocumentMoniker": "bbg-net-web-api\\Controllers\\PublisherController.cs",
