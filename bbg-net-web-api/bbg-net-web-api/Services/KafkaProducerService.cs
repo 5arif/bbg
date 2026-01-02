@@ -5,7 +5,7 @@ namespace bbg_net_web_api.Services
     public class KafkaProducerService
     {
         private readonly IProducer<string, string> _producer;
-        private const string TopicName = "test";
+        private const string TopicName = "orders.events";
 
         public KafkaProducerService(IConfiguration configuration)
         {
