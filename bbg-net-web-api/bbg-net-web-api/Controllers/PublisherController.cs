@@ -1,4 +1,5 @@
-﻿using bbg_net_web_api.Services;
+﻿using bbg_net_web_api.Models;
+using bbg_net_web_api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace bbg_net_web_api.Controllers
@@ -15,9 +16,9 @@ namespace bbg_net_web_api.Controllers
         }
 
         [HttpPost("publish")]
-        public async Task<IActionResult> PublishMessage([FromBody] string message)
+        public async Task<IActionResult> PublishMessage([FromBody] OrderEvent message)
         {
-            await _kafkaProducerService.ProduceMessageAsync("fromdotnet", message);
+            await _kafkaProducerService.ProduceMessageAsync(message);
             return Ok(message);
         }
     }

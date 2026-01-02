@@ -1,4 +1,6 @@
-﻿using Confluent.Kafka;
+﻿using bbg_net_web_api.Models;
+using Confluent.Kafka;
+using Newtonsoft.Json;
 
 namespace bbg_net_web_api.Services
 {
@@ -16,10 +18,23 @@ namespace bbg_net_web_api.Services
             _producer = new ProducerBuilder<string, string>(producerConfig).Build();
         }
 
-        public async Task ProduceMessageAsync(string key, string message)
+        public async Task ProduceMessageAsync(OrderEvent order)
         {
-            var dr = await _producer.ProduceAsync(TopicName, new Message<string, string> { Key = key, Value = message });
-            Console.WriteLine($"Delivered message to {dr.TopicPartitionOffset}");
+            var jsonMessage = JsonConvert.SerializeObject(order);
+            var message = new Message<string, string>
+            {
+                Key = order.OrderId.ToString(), // Key can be a simple string
+                Value = jsonMessage
+            };            
+            var deliveryReport = await _producer.ProduceAsync(TopicName, message);
+            Console.WriteLine($"Delivered '{deliveryReport.Value}' to '{deliveryReport.TopicPartitionOffset}'");
+        }
+
+        public void Dispose()
+        {
+            // Ensure all queued messages are delivered
+            _producer.Flush();
+            _producer.Dispose();
         }
     }
 }
