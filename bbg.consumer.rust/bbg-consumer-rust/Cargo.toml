@@ -1,0 +1,15 @@
+[package]
+name = "bbg-consumer-rust"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# Framework Web
+axum = "0.7"
+# Runtime Async
+tokio = { version = "1.0", features = ["full"] }
+# Kafka Client (Otomatis build librdkafka via cmake)
+rdkafka = { version = "0.37", features = ["cmake-build"] }
+# Logging
+tracing = "0.1"
+tracing-subscriber = "0.3"
