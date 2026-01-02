@@ -1,4 +1,6 @@
 
+using bbg_net_web_api.Services;
+
 namespace bbg_net_web_api
 {
     public class Program
@@ -12,6 +14,9 @@ namespace bbg_net_web_api
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+
+            //add Kafka service
+            builder.Services.AddSingleton<KafkaProducerService>();
 
             var app = builder.Build();
 
