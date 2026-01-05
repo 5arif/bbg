@@ -1,4 +1,4 @@
-﻿namespace bbg_net_web_api.Models
+﻿namespace Bbg.Producer.Web.Api.Models
 {
     public class OrderEvent
     {

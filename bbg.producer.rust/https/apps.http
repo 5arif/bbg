@@ -1,0 +1,9 @@
+###
+POST http://localhost:8100/send
+Content-Type: application/json
+
+{
+  "orderId": 1,
+  "amount" : 1000,
+  "customer": "Sarif H"
+}

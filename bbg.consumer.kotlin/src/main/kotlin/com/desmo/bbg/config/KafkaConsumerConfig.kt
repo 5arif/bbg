@@ -15,18 +15,19 @@ import org.springframework.kafka.listener.DefaultErrorHandler
 import org.springframework.kafka.support.ExponentialBackOffWithMaxRetries
 
 @Configuration
-class KafkaConsumerConfig {
+class KafkaConsumerConfig(
+    @org.springframework.beans.factory.annotation.Value("\${spring.kafka.bootstrap-servers:localhost:9092}")
+    private val bootstrapServers: String
+) {
 
     // --- Consumer side ---
     @Bean
     fun consumerFactory(): ConsumerFactory<String, Any> {
         val props = mapOf(
-            ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to "localhost:9092",
-            ConsumerConfig.GROUP_ID_CONFIG to "sample-consumer-group",
+            ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
+            ConsumerConfig.GROUP_ID_CONFIG to "order-group",
             ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-            ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to org.springframework.kafka.support.serializer.JacksonJsonDeserializer::class.java,
-            "spring.json.trusted.packages" to "*",
-            "spring.json.use.type.headers" to "true",
+            ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java, // Changed to StringDeserializer
             ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to "false",
             ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest"
         )
@@ -43,6 +44,8 @@ class KafkaConsumerConfig {
         factory.containerProperties.ackMode = ContainerProperties.AckMode.MANUAL
         factory.setCommonErrorHandler(defaultErrorHandler)
         factory.setConcurrency(3)
+        // Add Message Converter to handle JSON conversion based on target type
+        factory.setRecordMessageConverter(org.springframework.kafka.support.converter.StringJacksonJsonMessageConverter())
         return factory
     }
 
@@ -50,7 +53,7 @@ class KafkaConsumerConfig {
     @Bean
     fun producerFactory(): ProducerFactory<String, Any> {
         val props = mapOf(
-            ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to "localhost:9092",
+            ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
             ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
             ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to org.springframework.kafka.support.serializer.JacksonJsonSerializer::class.java,
             // Optional: include type info in headers

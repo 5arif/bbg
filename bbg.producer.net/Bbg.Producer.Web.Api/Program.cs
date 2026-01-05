@@ -1,7 +1,6 @@
+using Bbg.Producer.Web.Api.Services;
 
-using bbg_net_web_api.Services;
-
-namespace bbg_net_web_api
+namespace Bbg.Producer.Web.Api
 {
     public class Program
     {

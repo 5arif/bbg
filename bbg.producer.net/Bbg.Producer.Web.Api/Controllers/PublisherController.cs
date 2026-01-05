@@ -1,8 +1,8 @@
-﻿using bbg_net_web_api.Models;
-using bbg_net_web_api.Services;
+﻿using Bbg.Producer.Web.Api.Models;
+using Bbg.Producer.Web.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace bbg_net_web_api.Controllers
+namespace Bbg.Producer.Web.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -26,7 +26,7 @@ async fn main() {
 
     let shared_state = Arc::new(AppState {
         producer,
-        topic: "api-events".to_string(),
+        topic: "orders.events".to_string(),
     });
 
     // 3. Setup Routing API
@@ -49,7 +49,7 @@ async fn kafka_handler(
 ) -> String {
     let record = FutureRecord::to(&state.topic)
         .payload(&body)
-        .key("web-key");
+        .key("producer-rust");
 
     // Kirim secara asinkron ke Kafka
     match state.producer.send(record, Duration::from_secs(0)).await {

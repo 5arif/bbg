@@ -1,13 +1,13 @@
-﻿using bbg_net_web_api.Models;
+﻿using Bbg.Producer.Web.Api.Models;
 using Confluent.Kafka;
 using Newtonsoft.Json;
 
-namespace bbg_net_web_api.Services
+namespace Bbg.Producer.Web.Api.Services
 {
     public class KafkaProducerService
     {
         private readonly IProducer<string, string> _producer;
-        private const string TopicName = "orders.events";
+        private const string _topicName = "orders.events";
 
         public KafkaProducerService(IConfiguration configuration)
         {
@@ -23,10 +23,10 @@ namespace bbg_net_web_api.Services
             var jsonMessage = JsonConvert.SerializeObject(order);
             var message = new Message<string, string>
             {
-                Key = order.orderId.ToString(), // Key can be a simple string
+                Key = "producer-net", // Key can be a simple string
                 Value = jsonMessage
             };            
-            var deliveryReport = await _producer.ProduceAsync(TopicName, message);
+            var deliveryReport = await _producer.ProduceAsync(_topicName, message);
             Console.WriteLine($"Delivered '{deliveryReport.Value}' to '{deliveryReport.TopicPartitionOffset}'");
         }
 
