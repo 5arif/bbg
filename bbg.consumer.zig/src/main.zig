@@ -4,8 +4,11 @@ const OrderConsumer = bbg_consumer_zig.OrderConsumer;
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer {
+        const status = gpa.deinit();
+        if (status == .leak) @panic("Memory leak detected");
+    }
     const allocator = gpa.allocator();
-    defer _ = gpa.deinit();
 
     const bootstrap_servers = "localhost:9092";
     const group_id = "order_consumer_group";
