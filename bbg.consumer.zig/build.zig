@@ -7,6 +7,11 @@ const std = @import("std");
 // build runner to parallelize the build automatically (and the cache system to
 // know when a step doesn't need to be re-run).
 pub fn build(b: *std.Build) void {
+    // Add vcpkg paths for librdkafka on Windows
+    const vcpkg_include = "D:/source/vcpkg/installed/x64-windows/include";
+    const vcpkg_lib = "D:/source/vcpkg/installed/x64-windows/lib";
+    const vcpkg_bin = "D:/source/vcpkg/installed/x64-windows/bin";
+
     // Standard target options allow the person running `zig build` to choose
     // what target to build for. Here we do not override the defaults, which
     // means any target is allowed, and the default is native. Other options
@@ -16,24 +21,10 @@ pub fn build(b: *std.Build) void {
     // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall. Here we do not
     // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
-    const kafka_dep = b.dependency("kafka", .{
-        .target = target,
-    });
-    const kafka_mod = kafka_dep.module("kafka");
-
-    const httpz_dep = b.dependency("httpz", .{
-        .target = target,
-        .optimize = optimize,
-    });
-    const httpz_mod = httpz_dep.module("httpz");
-
-    // Add vcpkg paths for librdkafka on Windows
-    const vcpkg_include = "D:/source/vcpkg/installed/x64-windows/include";
-    const vcpkg_lib = "D:/source/vcpkg/installed/x64-windows/lib";
-
-    // Add include path to kafka module for @cImport
-    kafka_mod.addIncludePath(.{ .cwd_relative = vcpkg_include });
-    kafka_mod.addLibraryPath(.{ .cwd_relative = vcpkg_lib });
+    // It's also possible to define more custom flags to toggle optional features
+    // of this build script using `b.option()`. All defined flags (including
+    // target and optimize options) will be listed when running `zig build --help`
+    // in this directory.
 
     // This creates a module, which represents a collection of source files alongside
     // some compilation options, such as optimization mode and linked system libraries.
@@ -42,22 +33,15 @@ pub fn build(b: *std.Build) void {
     // to our consumers. We must give it a name because a Zig package can expose
     // multiple modules and consumers will need to be able to specify which
     // module they want to access.
-    const mod = b.addModule("bbg_producer_zig", .{
-        // The root source file is the "entry point" of this module. Users of
-        // this module will only be able to access public declarations contained
-        // in this file, which means that if you have declarations that you
-        // intend to expose to consumers that were defined in other files part
-        // of this module, you will have to make sure to re-export them from
-        // the root file.
+    const mod = b.addModule("bbg_consumer_zig", .{
         .root_source_file = b.path("src/root.zig"),
-        // Later on we'll use this module as the root module of a test executable
-        // which requires us to specify a target.
         .target = target,
-        .imports = &.{
-            .{ .name = "kafka", .module = kafka_mod },
-        },
+        .optimize = optimize,
     });
-    mod.linkSystemLibrary("rdkafka", .{});
+    const kafka_dep = b.dependency("kafka", .{});
+    const kafka_mod = kafka_dep.module("kafka");
+    kafka_mod.addIncludePath(.{ .cwd_relative = vcpkg_include });
+    mod.addImport("kafka", kafka_mod);
 
     // Here we define an executable. An executable needs to have a root module
     // which needs to expose a `main` function. While we could add a main function
@@ -76,7 +60,7 @@ pub fn build(b: *std.Build) void {
     // If neither case applies to you, feel free to delete the declaration you
     // don't need and to put everything under a single module.
     const exe = b.addExecutable(.{
-        .name = "bbg_producer_zig",
+        .name = "bbg_consumer_zig",
         .root_module = b.createModule(.{
             // b.createModule defines a new module just like b.addModule but,
             // unlike b.addModule, it does not expose the module to consumers of
@@ -91,45 +75,40 @@ pub fn build(b: *std.Build) void {
             // List of modules available for import in source files part of the
             // root module.
             .imports = &.{
-                // Here "bbg_producer_zig" is the name you will use in your source code to
-                // import this module (e.g. `@import("bbg_producer_zig")`). The name is
-                // repeated because you are allowed to rename your imports, which
-                // can be extremely useful in case of collisions (which can happen
-                // importing modules from different packages).
-                .{ .name = "bbg_producer_zig", .module = mod },
+                .{ .name = "bbg_consumer_zig", .module = mod },
                 .{ .name = "kafka", .module = kafka_mod },
-                .{ .name = "httpz", .module = httpz_mod },
             },
         }),
     });
+
+    exe.addIncludePath(.{ .cwd_relative = vcpkg_include });
+    exe.addLibraryPath(.{ .cwd_relative = vcpkg_lib });
     exe.linkSystemLibrary("rdkafka");
+    exe.linkLibC();
+
+    const dlls = [_][]const u8{ "rdkafka.dll", "rdkafka++.dll", "lz4.dll" };
+    for (dlls) |dll_name| {
+        const full_src_path = b.pathJoin(&.{ vcpkg_bin, dll_name });
+        const full_dest_path = b.getInstallPath(.bin, dll_name);
+
+        // First check if the file exists in the source (vcpkg)
+        std.fs.accessAbsolute(full_src_path, .{}) catch continue;
+
+        // Only add the install step if the file does NOT exist in the destination (zig-out/bin)
+        std.fs.accessAbsolute(full_dest_path, .{}) catch {
+            const install_dll = b.addInstallFile(
+                .{ .cwd_relative = full_src_path },
+                b.pathJoin(&.{ "bin", dll_name }),
+            );
+            b.getInstallStep().dependOn(&install_dll.step);
+        };
+    }
 
     // This declares intent for the executable to be installed into the
     // install prefix when running `zig build` (i.e. when executing the default
     // step). By default the install prefix is `zig-out/` but can be overridden
     // by passing `--prefix` or `-p`.
     b.installArtifact(exe);
-
-    // On Windows, copy the required DLLs to the output directory only if they don't exist
-    if (target.result.os.tag == .windows) {
-        const vcpkg_bin = "D:/source/vcpkg/installed/x64-windows/bin";
-        const dlls = [_][]const u8{ "lz4.dll", "rdkafka.dll", "rdkafka++.dll" };
-
-        for (dlls) |dll| {
-            const dest_rel_path = b.pathJoin(&.{ "bin", dll });
-            const dest_full_path = b.getInstallPath(.{ .custom = "bin" }, dll);
-
-            std.fs.accessAbsolute(dest_full_path, .{}) catch {
-                // File doesn't exist, schedule copy
-                const dll_src_path = b.pathJoin(&.{ vcpkg_bin, dll });
-                b.getInstallStep().dependOn(&b.addInstallFile(
-                    .{ .cwd_relative = dll_src_path },
-                    dest_rel_path,
-                ).step);
-                continue;
-            };
-        }
-    }
 
     // This creates a top level step. Top level steps have a name and can be
     // invoked by name when running `zig build` (e.g. `zig build run`).
