@@ -1,0 +1,43 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "zig build",
+            "type": "shell",
+            "command": "zig",
+            "args": [
+                "build"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "detail": "Build the Zig project"
+        },
+        {
+            "label": "zig build run",
+            "type": "shell",
+            "command": "zig",
+            "args": [
+                "build",
+                "run"
+            ],
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "Build and run the Zig project"
+        },
+        {
+            "label": "zig test",
+            "type": "shell",
+            "command": "zig",
+            "args": [
+                "build",
+                "test"
+            ],
+            "group": "test",
+            "problemMatcher": [],
+            "detail": "Run tests"
+        }
+    ]
+}
