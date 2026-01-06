@@ -3,7 +3,17 @@ POST http://localhost:5194/api/publisher/publish
 Content-Type: application/json
 
 {
-  "orderId": "ORD001",
-  "amount": 1000,
-  "customer": "Jhon Doe"
+  "OrderId": "ORD001",
+  "Amount": 1000,
+  "Customer": "Jhon Doe"
+}
+
+###
+POST http://localhost:5194/api/publisher/publish-service
+Content-Type: application/json
+
+{
+  "ServiceId": "SRV001",
+  "Description": "Ganti Oli",
+  "Date": "2026-01-06T04:12:34.594Z"
 }

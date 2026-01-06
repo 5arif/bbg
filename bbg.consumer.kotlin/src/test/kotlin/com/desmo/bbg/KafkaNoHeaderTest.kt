@@ -1,6 +1,6 @@
 package com.desmo.bbg
 
-import com.desmo.bbg.consumer.OrderEventListener
+import com.desmo.bbg.listener.OrderEventListener
 import com.desmo.bbg.model.OrderEvent
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

@@ -13,11 +13,14 @@ import org.springframework.kafka.listener.ContainerProperties
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer
 import org.springframework.kafka.listener.DefaultErrorHandler
 import org.springframework.kafka.support.ExponentialBackOffWithMaxRetries
+import tools.jackson.databind.PropertyNamingStrategies
 
 @Configuration
 class KafkaConsumerConfig(
-    @org.springframework.beans.factory.annotation.Value("\${spring.kafka.bootstrap-servers:localhost:9092}")
-    private val bootstrapServers: String
+    @org.springframework.beans.factory.annotation.Value($$"${spring.kafka.bootstrap-servers:localhost:9092}")
+    private val bootstrapServers: String,
+    @org.springframework.beans.factory.annotation.Value("\${spring.kafka.consumer.group-id:order-group}")
+    private val groupId: String
 ) {
 
     // --- Consumer side ---
@@ -25,11 +28,12 @@ class KafkaConsumerConfig(
     fun consumerFactory(): ConsumerFactory<String, Any> {
         val props = mapOf(
             ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
-            ConsumerConfig.GROUP_ID_CONFIG to "order-group",
+            ConsumerConfig.GROUP_ID_CONFIG to groupId,
             ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
             ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java, // Changed to StringDeserializer
             ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to "false",
-            ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest"
+            ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
+            ConsumerConfig.METADATA_MAX_AGE_CONFIG to 5000
         )
         return DefaultKafkaConsumerFactory(props)
     }
@@ -44,8 +48,14 @@ class KafkaConsumerConfig(
         factory.containerProperties.ackMode = ContainerProperties.AckMode.MANUAL
         factory.setCommonErrorHandler(defaultErrorHandler)
         factory.setConcurrency(3)
+
+        // Configure JsonMapper with UpperCamelCase naming strategy
+        val jsonMapper = tools.jackson.databind.json.JsonMapper.builder()
+            .propertyNamingStrategy(PropertyNamingStrategies.UPPER_CAMEL_CASE)
+            .build()
+
         // Add Message Converter to handle JSON conversion based on target type
-        factory.setRecordMessageConverter(org.springframework.kafka.support.converter.StringJacksonJsonMessageConverter())
+        factory.setRecordMessageConverter(org.springframework.kafka.support.converter.StringJacksonJsonMessageConverter(jsonMapper))
         return factory
     }
 

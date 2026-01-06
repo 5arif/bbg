@@ -1,6 +1,6 @@
-package com.desmo.bbg.consumer
+package com.desmo.bbg.listener
 
-import com.desmo.bbg.model.OrderEvent
+import com.desmo.bbg.model.ServiceEvent
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -11,18 +11,12 @@ import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 
 @Component
-class OrderEventListener {
-
+class  ServiceEventListener {
     private val log = LoggerFactory.getLogger(OrderEventListener::class.java)
     private val mapper = ObjectMapper().registerKotlinModule()
 
-    @KafkaListener(
-        topics = ["orders.events"],
-        containerFactory = "kafkaListenerContainerFactory"
-        // If you use type headers, you can receive @Payload Any and map,
-        // but here we target OrderEvent directly for convenience.
-    )
-    fun onMessage(@Payload event: OrderEvent, record: ConsumerRecord<String, Any>, ack: Acknowledgment) {
+    @KafkaListener(topics = ["services.events"], containerFactory = "kafkaListenerContainerFactory")
+    fun onMessage(@Payload event: ServiceEvent, record: ConsumerRecord<String, Any>, ack: Acknowledgment) {
         try {
             // Business logic here
             processEvent(event)
@@ -36,9 +30,9 @@ class OrderEventListener {
         }
     }
 
-    private fun processEvent(event: OrderEvent) {
+    private fun processEvent(event: ServiceEvent) {
         // Example processing
-        require(event.amount >= 0) { "Amount cannot be negative" }
+        require(event.description != null || event.description != "") { "Please specify description" }
 
         val eventStr = mapper.writeValueAsString(event)
         log.info(eventStr)
