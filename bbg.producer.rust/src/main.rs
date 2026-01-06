@@ -1,13 +1,13 @@
 use axum::{routing::post, Router, extract::State};
-use rdkafka::config::ClientConfig;
-use rdkafka::producer::{FutureProducer, FutureRecord};
+use rskafka::client::{ClientBuilder, partition::UnknownTopicHandling};
+use rskafka::record::Record;
 use std::sync::Arc;
-use std::time::Duration;
+use chrono::Utc;
 
 // 1. Definisikan State untuk berbagi Producer antar thread API
+// Di rskafka, kita biasanya berinteraksi dengan PartitionClient untuk pengiriman ke partisi spesifik
 struct AppState {
-    producer: FutureProducer,
-    topic: String,
+    partition_client: Arc<rskafka::client::partition::PartitionClient>,
 }
 
 #[tokio::main]
@@ -15,18 +15,27 @@ async fn main() {
     // Inisialisasi logging
     tracing_subscriber::fmt::init();
 
-    // 2. Konfigurasi Kafka Producer
-    let kafka_broker = "localhost:9092";
-    let producer: FutureProducer = ClientConfig::new()
-        .set("bootstrap.servers", kafka_broker)
-        .set("message.timeout.ms", "5000")
-        .set("linger.ms", "50") // Batching untuk efisiensi
-        .create()
-        .expect("Gagal membuat Kafka producer");
+    // 2. Konfigurasi Kafka Client
+    let kafka_broker = "localhost:9092".to_string();
+    let client = ClientBuilder::new(vec![kafka_broker])
+        .build()
+        .await
+        .expect("Gagal membuat Kafka client");
+
+    let topic = "orders.events";
+    
+    // Mendapatkan partition client (menggunakan partisi 0 secara default)
+    let partition_client = Arc::new(client
+        .partition_client(
+            topic.to_string(),
+            0,
+            UnknownTopicHandling::Retry,
+        )
+        .await
+        .expect("Gagal mendapatkan partition client"));
 
     let shared_state = Arc::new(AppState {
-        producer,
-        topic: "orders.events".to_string(),
+        partition_client,
     });
 
     // 3. Setup Routing API
@@ -47,16 +56,20 @@ async fn kafka_handler(
     State(state): State<Arc<AppState>>,
     body: String,
 ) -> String {
-    let record = FutureRecord::to(&state.topic)
-        .payload(&body)
-        .key("producer-rust");
+    let record = Record {
+        key: Some(b"producer-rust".to_vec()),
+        value: Some(body.into_bytes()),
+        headers: std::collections::BTreeMap::new(),
+        timestamp: Utc::now(),
+    };
 
     // Kirim secara asinkron ke Kafka
-    match state.producer.send(record, Duration::from_secs(0)).await {
-        Ok(delivery) => {
-            format!("✅ Berhasil! Partisi: {}, Offset: {}", delivery.0, delivery.1)
+    // rskafka::produce menerima Vec<Record>
+    match state.partition_client.produce(vec![record], rskafka::client::partition::Compression::default()).await {
+        Ok(offsets) => {
+            format!("✅ Berhasil! Offset: {:?}", offsets)
         },
-        Err((e, _)) => {
+        Err(e) => {
             format!("❌ Gagal mengirim ke Kafka: {:?}", e)
         }
     }

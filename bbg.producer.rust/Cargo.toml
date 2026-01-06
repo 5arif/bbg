@@ -8,8 +8,9 @@ edition = "2024"
 axum = "0.7"
 # Runtime Async
 tokio = { version = "1.0", features = ["full"] }
-# Kafka Client (Otomatis build librdkafka via cmake)
-rdkafka = { version = "0.37", features = ["cmake-build"] }
+# Kafka Client (Pure Rust)
+rskafka = { version = "0.6.0", features = ["full"] }
+chrono = "0.4"
 # Logging
 tracing = "0.1"
 tracing-subscriber = "0.3"
