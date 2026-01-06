@@ -1,8 +1,7 @@
 package com.desmo.bbg.listener
 
 import com.desmo.bbg.model.OrderEvent
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import tools.jackson.databind.ObjectMapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
@@ -11,10 +10,9 @@ import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 
 @Component
-class OrderEventListener {
+class OrderEventListener(private val mapper: ObjectMapper) {
 
     private val log = LoggerFactory.getLogger(OrderEventListener::class.java)
-    private val mapper = ObjectMapper().registerKotlinModule()
 
     @KafkaListener(
         topics = ["orders.events"],

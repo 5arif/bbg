@@ -13,7 +13,7 @@ import org.springframework.kafka.listener.ContainerProperties
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer
 import org.springframework.kafka.listener.DefaultErrorHandler
 import org.springframework.kafka.support.ExponentialBackOffWithMaxRetries
-import tools.jackson.databind.PropertyNamingStrategies
+
 
 @Configuration
 class KafkaConsumerConfig(
@@ -39,9 +39,18 @@ class KafkaConsumerConfig(
     }
 
     @Bean
+    fun objectMapper(): tools.jackson.databind.json.JsonMapper {
+        return tools.jackson.databind.json.JsonMapper.builder()
+            .addModule(tools.jackson.module.kotlin.KotlinModule.Builder().build())
+            .propertyNamingStrategy(tools.jackson.databind.PropertyNamingStrategies.UPPER_CAMEL_CASE)
+            .build()
+    }
+
+    @Bean
     fun kafkaListenerContainerFactory(
         consumerFactory: ConsumerFactory<String, Any>,
-        defaultErrorHandler: DefaultErrorHandler
+        defaultErrorHandler: DefaultErrorHandler,
+        objectMapper: tools.jackson.databind.json.JsonMapper
     ): ConcurrentKafkaListenerContainerFactory<String, Any> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, Any>()
         factory.setConsumerFactory(consumerFactory)
@@ -49,13 +58,8 @@ class KafkaConsumerConfig(
         factory.setCommonErrorHandler(defaultErrorHandler)
         factory.setConcurrency(3)
 
-        // Configure JsonMapper with UpperCamelCase naming strategy
-        val jsonMapper = tools.jackson.databind.json.JsonMapper.builder()
-            .propertyNamingStrategy(PropertyNamingStrategies.UPPER_CAMEL_CASE)
-            .build()
-
         // Add Message Converter to handle JSON conversion based on target type
-        factory.setRecordMessageConverter(org.springframework.kafka.support.converter.StringJacksonJsonMessageConverter(jsonMapper))
+        factory.setRecordMessageConverter(org.springframework.kafka.support.converter.StringJacksonJsonMessageConverter(objectMapper))
         return factory
     }
 

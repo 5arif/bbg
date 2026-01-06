@@ -38,7 +38,7 @@ class KafkaNoHeaderTest {
     fun `should consume message without type headers`() {
         // Send a raw JSON string without any type headers
         // Using a plain String here mimics a producer that doesn't add type info
-        val json = """{"id":"123", "amount":100.0}"""
+        val json = """{"OrderId":"123", "Amount":100.0}"""
         
         kafkaTemplate.send("orders.events", "key-1", json).get(10, TimeUnit.SECONDS)
 
