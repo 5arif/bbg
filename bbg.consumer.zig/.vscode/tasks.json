@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "zig build",
+            "type": "shell",
+            "command": "zig build",
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "Standard zig build command"
+        },
+        {
+            "label": "zig run",
+            "type": "shell",
+            "command": "zig build run",
+            "group": "test",
+            "problemMatcher": [],
+            "detail": "Run the application"
+        }
+    ]
+}

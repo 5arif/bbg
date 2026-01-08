@@ -1,0 +1,9 @@
+### Trigger Order Event
+POST http://localhost:8088/order
+Content-Type: application/json
+
+{
+    "OrderId": "ORD002",
+    "Amount" : 1000,
+    "Customer": "Sarif H"
+}

@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug bbg_producer_zig",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/zig-out/bin/bbg_producer_zig.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "zig build"
+        },
+        {
+            "name": "Run bbg_producer_zig",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/zig-out/bin/bbg_producer_zig.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "zig build",
+            "terminal": "console"
+        }
+    ]
+}
