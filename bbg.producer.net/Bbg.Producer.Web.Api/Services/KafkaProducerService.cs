@@ -22,7 +22,7 @@ namespace Bbg.Producer.Web.Api.Services
             var jsonMessage = JsonConvert.SerializeObject(events);
             var message = new Message<string, string>
             {
-                Key = "producer-net",
+                Key = "order-producer",
                 Value = jsonMessage
             };
 
